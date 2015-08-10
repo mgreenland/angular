@@ -16,10 +16,13 @@ import {Component, Directive, View} from 'angular2/annotations';
 import {DOM} from 'angular2/src/dom/dom_adapter';
 import {bind} from 'angular2/di';
 import {DOCUMENT_TOKEN} from 'angular2/src/render/render';
+import {Type} from 'angular2/src/facade/lang';
 
 import {
   routerInjectables,
   Router,
+  Route,
+  AuxRoute,
   RouteConfig,
   appBaseHrefToken,
   routerDirectives
@@ -123,6 +126,15 @@ export function main() {
                      async.done();
                      return null;
                    })}));
+
+    it('should throw if a config has a component that is not defined', () => {
+      expect(() => new Route({path: '/', component: null}))
+          .toThrowError('Component for route "/" is not defined, or is not a class.');
+      expect(() => new AuxRoute({path: '/', component: undefined}))
+          .toThrowError('Component for route "/" is not defined, or is not a class.');
+      expect(() => new AuxRoute({path: '/', component:<Type>(<any>4)}))
+          .toThrowError('Component for route "/" is not defined, or is not a class.');
+    });
   });
 }
 
