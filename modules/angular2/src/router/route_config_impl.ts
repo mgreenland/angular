@@ -1,4 +1,4 @@
-import {CONST, Type} from 'angular2/src/facade/lang';
+import {CONST, Type, isType, BaseException} from 'angular2/src/facade/lang';
 import {List} from 'angular2/src/facade/collection';
 import {RouteDefinition} from './route_definition';
 export {RouteDefinition} from './route_definition';
@@ -26,6 +26,7 @@ export class Route implements RouteDefinition {
   loader: Function;
   redirectTo: string;
   constructor({path, component, as}: {path: string, component: Type, as?: string}) {
+    assertComponentExists(component, path);
     this.path = path;
     this.component = component;
     this.as = as;
@@ -43,6 +44,7 @@ export class AuxRoute implements RouteDefinition {
   loader: Function = null;
   redirectTo: string = null;
   constructor({path, component, as}: {path: string, component: Type, as?: string}) {
+    assertComponentExists(component, path);
     this.path = path;
     this.component = component;
     this.as = as;
@@ -71,5 +73,11 @@ export class Redirect implements RouteDefinition {
   constructor({path, redirectTo}: {path: string, redirectTo: string}) {
     this.path = path;
     this.redirectTo = redirectTo;
+  }
+}
+
+function assertComponentExists(component: Type, path: string): void {
+  if (!isType(component)) {
+    throw new BaseException(`Component for route "${path}" is not defined, or is not a class.`);
   }
 }
